@@ -26,9 +26,6 @@ DFRobotDFPlayerMini myDFPlayer;
 //MP3 Volume 0-30
 #define MP3_VOLUME 25
 
-//MP3 Volume 0-30
-#define MP3_VOLUME 25
-
 //Audio analysis MIN-MAX 0-1024
 
 #define PWM_MIN 0
