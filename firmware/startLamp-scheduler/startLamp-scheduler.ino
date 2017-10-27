@@ -6,16 +6,21 @@
 #include <Wire.h>
 #include <EEPROM.h>
 #include <RTClib.h> //RTClib by Adafruit
-#include "Scheduler.h"
-#include "Audio.h"
-
 #include <SoftwareSerial.h>
-#include "DFRobotDFPlayerMini.h"
+#include <DFRobotDFPlayerMini.h>
+
+#include "Scheduler.h"
+#include "AudioAnalysis.h"
+#include "MP3Player.h"
+
+
 
 SoftwareSerial mySoftwareSerial(14, 12, false, 256); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
 Scheduler mScheduler;
+AudioAnalysis mAudio;
+MP3Player tracks[AUDIO_TRACKS];
 
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -58,11 +63,13 @@ void setup() {
 
   syncTime();
 
-  //initAudioAnalisys();
-
-
+  mAudio.initAudioAnalisys();
   myDFPlayer.volume(MP3_VOLUME);  //Set volume value. From 0 to 30
-  myDFPlayer.loop(1);  //Play the first mp3
+  for (int i = 0; i < AUDIO_TRACKS; i++) {
+    tracks[i].start(myDFPlayer);
+  }
+  
+
 }
 
 

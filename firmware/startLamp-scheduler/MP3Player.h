@@ -1,17 +1,15 @@
-#ifndef Audio_h
-#define Audio_h
+#ifndef MP3Player_h
+#define MP3Player_h
 
-#include "Audio.h"
+#include "MP3Player.h"
 #include "parameters.h"
 
-class Audio
+class MP3Player
 {
   public:
-    Audio();
+    MP3Player();
     void update(int value);
     void start(DFRobotDFPlayerMini &DFPlayer);
-    void audio(void);
-    void initAudioAnalisys(void);
   private:
     static int _id;
     int _trackid;
