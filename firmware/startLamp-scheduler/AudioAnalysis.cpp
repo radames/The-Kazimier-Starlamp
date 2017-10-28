@@ -9,12 +9,12 @@ void AudioAnalysis::initAudioAnalisys(void) {
   memset(_vol, 0, sizeof(_vol));
 }
 
-unsigned int AudioAnalysis::audio(void)
+unsigned int AudioAnalysis::analysis(int input)
 {
   uint8_t  i;
   uint16_t minLvl, maxLvl;
   int n, height;
-  n   = analogRead(MIC_PIN); // Raw reading from mic
+  n   = input; // Raw reading from mic
   n   = abs(n - 512 - DC_OFFSET); // Center on zero
   n   = (n <= NOISE) ? 0 : (n - NOISE);     // Remove noise/hum
   _lvl = ((_lvl * 7) + n) >> 3;    // "Dampened" reading (else looks twitchy)
@@ -48,6 +48,7 @@ unsigned int AudioAnalysis::audio(void)
   _maxLvlAvg = (_maxLvlAvg * 63 + maxLvl) >> 6; // (fake rolling average)
 
   // Serial.println(4 * peak);
-  unsigned int output = map(4 * _peak, 250, 700, 0, 1024);
+  unsigned int output = map(4 * _peak, 250, 700, OUT_MIN, OUT_MAX);
+  output = constrain(output, OUT_MIN, OUT_MAX);
   return output;
 }

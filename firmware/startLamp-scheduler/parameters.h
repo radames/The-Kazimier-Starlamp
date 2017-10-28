@@ -11,8 +11,8 @@
 
 //Audio analysis MIN-MAX 0-1024
 
-#define PWM_MIN 0
-#define PWM_MAX 1024
+#define OUT_MIN 0
+#define OUT_MAX 1024
 
 
 // Audio analisys
@@ -23,3 +23,6 @@
 #define SAMPLES   100  // Length of buffer for dynamic level adjustment
 #define TOP       (N_PIXELS + 2) // Allow dot to go slightly off scale
 #define PEAK_FALL 10  // Rate of peak falling dot
+
+#define LED_PIN D4
+

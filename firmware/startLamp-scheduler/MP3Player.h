@@ -10,6 +10,8 @@ class MP3Player
     MP3Player();
     void update(int value);
     void start(DFRobotDFPlayerMini &DFPlayer);
+    void play();
+
   private:
     static int _id;
     int _trackid;

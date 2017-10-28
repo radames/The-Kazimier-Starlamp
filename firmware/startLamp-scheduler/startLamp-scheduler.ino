@@ -14,7 +14,6 @@
 #include "MP3Player.h"
 
 
-
 SoftwareSerial mySoftwareSerial(14, 12, false, 256); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
@@ -68,7 +67,10 @@ void setup() {
   for (int i = 0; i < AUDIO_TRACKS; i++) {
     tracks[i].start(myDFPlayer);
   }
-  
+  mScheduler.setStart("16:00:00");
+  mScheduler.setEnd("22:00:00");
+  mScheduler.setEvent(1,"16:30:00", "21:30:00", "00:30:00");
+  mScheduler.setEvent(2,"16:00:00", "22:00:00", "01:00:00");
 
 }
 
@@ -114,9 +116,11 @@ void syncTime(void) {
 
 void loop () {
 
-  if (millis() - lastPrintTime > 10000) {
+  if (millis() - lastPrintTime > 500) { //po
     lastPrintTime = millis();
+
     DateTime now = rtc.now();
+    mScheduler.update(now.hour(), now.minute(), now.second());
 
     Serial.print(now.year(), DEC);
     Serial.print('/');
@@ -137,4 +141,20 @@ void loop () {
   }
 
   //audio();
+}
+
+void event1(void){
+
+  tracks[1].play();  //track 2 (Bell Sound 1)
+  int input = analogRead(MIC_PIN);
+  unsigned int out = mAudio.analysis(input);
+  analogWrite(LED_PIN, out);
+}
+
+void event2(void){
+
+  tracks[2].play();  //track 2 (Bell Sound 1)
+  int input = analogRead(MIC_PIN);
+  unsigned int out = mAudio.analysis(input);
+  analogWrite(LED_PIN, out);
 }
