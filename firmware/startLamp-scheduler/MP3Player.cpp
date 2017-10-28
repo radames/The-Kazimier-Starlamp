@@ -15,6 +15,12 @@ void MP3Player::start(DFRobotDFPlayerMini &DFPlayer) {
 void MP3Player::play() {
   _DFPlayer->play(_trackid);
 }
+void MP3Player::loop() {
+  _DFPlayer->play(_trackid);
+}
+void MP3Player::stop() {
+  _DFPlayer->stop();
+}
 void MP3Player::update(int value)
 {
   _value = value;

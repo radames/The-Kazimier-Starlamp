@@ -69,8 +69,8 @@ void setup() {
   }
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
-  mScheduler.setEvent(1,"16:30:00", "21:30:00", "00:30:00");
-  mScheduler.setEvent(2,"16:00:00", "22:00:00", "01:00:00");
+ // mScheduler.setEvent(1,"16:30:00", "21:30:00", "00:30:00");
+  //mScheduler.setEvent(2,"16:00:00", "22:00:00", "01:00:00");
 
 }
 
@@ -143,8 +143,14 @@ void loop () {
   //audio();
 }
 
-void event1(void){
 
+void ambientIdle(void){
+  tracks[0].loop();  //track 1 (Ambient Mode)
+}
+
+
+void event1(void){
+  //1 min 
   tracks[1].play();  //track 2 (Bell Sound 1)
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -152,8 +158,8 @@ void event1(void){
 }
 
 void event2(void){
-
-  tracks[2].play();  //track 2 (Bell Sound 1)
+  //2min
+  tracks[2].play();  //track 2 (Bell Sound 2)
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
   analogWrite(LED_PIN, out);
