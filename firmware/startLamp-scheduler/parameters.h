@@ -13,6 +13,7 @@
 
 #define OUT_MIN 0
 #define OUT_MAX 1024
+#define LED_OSC_PERIOD 10000 // 10 seconds
 
 
 // Audio analisys

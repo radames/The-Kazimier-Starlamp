@@ -136,9 +136,10 @@ void loop () {
     logDateTime();
     Serial.println();
   }
-  
+
   switch (nState) {
     case AMBIENT:
+      ambientIdle();
       break;
     case EVENT1:
       break;
@@ -151,9 +152,19 @@ void loop () {
 
 
 void ambientIdle(void) {
-  tracks[0].loop();  //track 1 (Ambient Mode)
+  if (!tracks[0].isPlaying()) {
+    tracks[0].loop();
+  }
+  ledOSC();
 }
 
+
+void ledOSC() {
+    //sine wave led pattern 
+    float t = (float)millis()/LED_OSC_PERIOD;
+    int pValue = 0.5*OUT_MAX*(1 + sin(2.0*PI*t));
+    analogWrite(LED_PIN, pValue);
+}
 
 void event1(void) {
   //1 min
