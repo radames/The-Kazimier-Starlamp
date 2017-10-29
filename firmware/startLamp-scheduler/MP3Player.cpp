@@ -17,7 +17,7 @@ void MP3Player::play() {
    _isPlaying = true;
 }
 void MP3Player::loop() {
-  _DFPlayer->play(_trackid);
+  _DFPlayer->loop(_trackid);
   _isPlaying = true;
 }
 void MP3Player::stop() {

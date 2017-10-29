@@ -20,9 +20,6 @@ Scheduler mScheduler;
 AudioAnalysis mAudio;
 MP3Player tracks[AUDIO_TRACKS];
 
-
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
 RTC_DS3231 rtc;
 WiFiUDP ntpUDP;
 
@@ -33,7 +30,7 @@ NTPClient timeClient(ntpUDP, NTP_SERVER, GMT_TIME_ZONE * 3600 , 60000);
 int timeUpdated = 0;
 long lastPrintTime = 0;
 
-enum EventState { AMBIENT, EVENT1, EVENT2 };
+enum EventState {EVENT1, EVENT2, AMBIENT};
 EventState nState = AMBIENT;
 
 void setup() {
@@ -72,8 +69,8 @@ void setup() {
   }
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
-  // mScheduler.setEvent(1,"16:30:00", "21:30:00", "00:30:00");
-  //mScheduler.setEvent(2,"16:00:00", "22:00:00", "01:00:00");
+  mScheduler.setEvent(EVENT1, "02:35:00", "02:37:00", "00:00:01", schedulerCallBack);
+  mScheduler.setEvent(EVENT2, "02:36:00", "02:37:00", "00:00:03", schedulerCallBack);
 
 }
 
@@ -128,13 +125,13 @@ void syncTime(void) {
 }
 
 void loop () {
+  DateTime now = rtc.now();
+  mScheduler.update(now.hour(), now.minute(), now.second());
 
-  if (millis() - lastPrintTime > 500) { //po
+
+  if (millis() - lastPrintTime > 100) { //po
     lastPrintTime = millis();
-
-    DateTime now = rtc.now();
     logDateTime();
-    Serial.println();
   }
 
   switch (nState) {
@@ -160,13 +157,18 @@ void ambientIdle(void) {
 
 
 void ledOSC() {
-    //sine wave led pattern 
-    float t = (float)millis()/LED_OSC_PERIOD;
-    int pValue = 0.5*LED_OSC_MAX_AMP*(1 + sin(2.0*PI*t));
-    analogWrite(LED_PIN, pValue);
+  //sine wave led pattern
+  float t = (float)millis() / LED_OSC_PERIOD;
+  int pValue = 0.5 * LED_OSC_MAX_AMP * (1 + sin(2.0 * PI * t));
+  analogWrite(LED_PIN, pValue);
 }
 
-void event1(void) {
+void schedulerCallBack(int eventId) {
+  Serial.print("EVENT ---> ");
+  Serial.println(eventId);
+}
+
+void event1Func() {
   //1 min
   tracks[1].play();  //track 2 (Bell Sound 1)
   int input = analogRead(MIC_PIN);
@@ -174,7 +176,7 @@ void event1(void) {
   analogWrite(LED_PIN, out);
 }
 
-void event2(void) {
+void event2Func() {
   //2min
   tracks[2].play();  //track 2 (Bell Sound 2)
   int input = analogRead(MIC_PIN);
