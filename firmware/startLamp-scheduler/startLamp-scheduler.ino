@@ -33,6 +33,9 @@ NTPClient timeClient(ntpUDP, NTP_SERVER, GMT_TIME_ZONE * 3600 , 60000);
 int timeUpdated = 0;
 long lastPrintTime = 0;
 
+enum EventState { AMBIENT, EVENT1, EVENT2 };
+EventState nState = AMBIENT;
+
 void setup() {
   Serial.begin(9600);
 
@@ -84,7 +87,7 @@ void syncTime(void) {
 
   WiFi.begin(ssid, password);
   delay(10000); //wait 10 secods for connection
- 
+
   switch (WiFi.status()) {
     case WL_CONNECTED:
       {
@@ -130,9 +133,17 @@ void loop () {
     lastPrintTime = millis();
 
     DateTime now = rtc.now();
-    mScheduler.update(now.hour(), now.minute(), now.second());
     logDateTime();
     Serial.println();
+  }
+  
+  switch (nState) {
+    case AMBIENT:
+      break;
+    case EVENT1:
+      break;
+    case EVENT2:
+      break;
   }
 
   //audio();
