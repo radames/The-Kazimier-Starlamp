@@ -69,8 +69,9 @@ void setup() {
   }
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
-  mScheduler.setEvent(EVENT1, "02:35:00", "02:37:00", "00:00:01", schedulerCallBack);
-  mScheduler.setEvent(EVENT2, "02:36:00", "02:37:00", "00:00:03", schedulerCallBack);
+  
+  mScheduler.setEvent(EVENT1, "03:58:00", "04:37:00", "00:00:10", "00:00:03", schedulerCallBack);
+  //mScheduler.setEvent(EVENT2, "03:00:20", "04:37:00", "00:00:20", schedulerCallBack);
 
 }
 
@@ -99,7 +100,10 @@ void syncTime(void) {
 
         long actualTime = timeClient.getEpochTime();
         Serial.print("Internet Epoch Time: ");
-        Serial.println(actualTime);
+        Serial.print(actualTime);
+        Serial.print("  ");
+        Serial.println(timeClient.getFormattedTime());
+        Serial.println();
         rtc.adjust(DateTime(actualTime));
         Serial.println("RTC Synced with NTP time");
 
@@ -139,8 +143,10 @@ void loop () {
       ambientIdle();
       break;
     case EVENT1:
+        event1Func();
       break;
     case EVENT2:
+        event2Func();
       break;
   }
 
@@ -149,7 +155,9 @@ void loop () {
 
 
 void ambientIdle(void) {
-  if (!tracks[0].isPlaying()) {
+  //play track 1 on loop
+  if (!tracks[0].isPlaying()) { 
+    resetTracksState();
     tracks[0].loop();
   }
   ledOSC();
@@ -163,14 +171,27 @@ void ledOSC() {
   analogWrite(LED_PIN, pValue);
 }
 
-void schedulerCallBack(int eventId) {
-  Serial.print("EVENT ---> ");
-  Serial.println(eventId);
+void schedulerCallBack(int eventId, bool eventState) {
+  
+  Serial.print("EVENT--->  ");
+  Serial.print(eventId);
+  Serial.print("  ");
+  if(eventState){
+    Serial.print("STARTED");
+  }else{
+    Serial.print("ENDED");
+  }
+  Serial.println("  ");
+
 }
 
 void event1Func() {
   //1 min
-  tracks[1].play();  //track 2 (Bell Sound 1)
+  //play track 2 (Bell Sound 1)
+  if (!tracks[1].isPlaying()) {
+    resetTracksState();
+    tracks[1].play();  
+  }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
   analogWrite(LED_PIN, out);
@@ -178,7 +199,11 @@ void event1Func() {
 
 void event2Func() {
   //2min
-  tracks[2].play();  //track 2 (Bell Sound 2)
+  //play track 3 track 2 (Bell Sound 2)
+  if (!tracks[2].isPlaying()) {
+    resetTracksState();
+    tracks[2].play();  
+  }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
   analogWrite(LED_PIN, out);
@@ -195,3 +220,8 @@ void logDateTime(void) {
   Serial.print(now.second(), DEC); Serial.println();
 }
 
+void resetTracksState(){
+  for (int i = 0; i < AUDIO_TRACKS; i++) {
+    tracks[i].stop();
+  }
+}

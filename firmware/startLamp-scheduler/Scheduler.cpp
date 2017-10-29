@@ -42,13 +42,16 @@ void Scheduler::setEnd(const char* time) {
   _n_endTime = convertToSec(time);
 }
 
-void Scheduler::setEvent(int id, const char* startTime, const char* endTime, const char* period, void (*callback)(int eventId)) {
+void Scheduler::setEvent(int id, const char* startTime, const char* endTime, const char* period, const char* timeLength, void (*callback)(int eventId, bool eventState)) {
   _events[id]._id = id;
   _events[id]._startTime = convertToSec(startTime);
   _events[id]._endTime = convertToSec(endTime);
   _events[id]._period = convertToSec(period);
+  _events[id]._timeLength = convertToSec(timeLength);
   _events[id]._callback = callback;
   _events[id]._lastEventTime = 0;
+  _events[id]._lastEndEventTime = 0;
+
 }
 
 bool SchedulerEvent::update(uint32_t now)
@@ -56,12 +59,16 @@ bool SchedulerEvent::update(uint32_t now)
   bool doneEvent = false;
   if (now >= _startTime && now < _endTime) {
     //only runs  in this interval
-    if ((now - _lastEventTime >= _period)) {
+    if (now - _lastEventTime >= _period) {
       _lastEventTime =  now;
-      (*_callback)(_id);
+      _lastEndEventTime = now;
+      (*_callback)(_id, true);
+    }else if (now >  (_lastEndEventTime + _timeLength) ) {
+      (*_callback)(_id, false);
+       _lastEndEventTime = now;
     }
-
   }
+
 
   doneEvent = true;
   return doneEvent;

@@ -16,10 +16,12 @@ class SchedulerEvent
   protected:
     int _id;
     uint32_t _lastEventTime;
+    uint32_t _lastEndEventTime;
     uint32_t _period;
+    uint32_t _timeLength;
     uint32_t _startTime;
     uint32_t _endTime;
-    void (*_callback)(int eventId);
+    void (*_callback)(int eventId, bool eventState);
 };
 
 
@@ -28,7 +30,7 @@ class Scheduler
   public:
     Scheduler();
 
-    void setEvent(int id, const char* startTime, const char* endTime, const char* period, void (*callback)(int eventId));
+    void setEvent(int id, const char* startTime, const char* endTime, const char* period, const char* timeLength, void (*callback)(int eventId, bool eventState));
 
     void update(uint8_t hour, uint8_t min, uint8_t sec);
     void setStart(const char* time);
