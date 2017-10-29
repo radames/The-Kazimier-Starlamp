@@ -70,7 +70,7 @@ void setup() {
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
   
-  mScheduler.setEvent(EVENT1, "14:35:00", "14:40:00", "00:00:10", "00:00:03", schedulerCallBack);
+  mScheduler.setEvent(EVENT1, "16:03:00", "16:10:00", "00:01:00", "00:00:10", schedulerCallBack);
   //mScheduler.setEvent(EVENT2, "03:00:20", "04:37:00", "00:00:20", schedulerCallBack);
 
 }
@@ -178,8 +178,10 @@ void schedulerCallBack(int eventId, bool eventState) {
   Serial.print("  ");
   if(eventState){
     Serial.print("STARTED");
+    nState = (EventState)eventId;
   }else{
     Serial.print("ENDED");
+    nState = AMBIENT;
   }
   Serial.println("  ");
 

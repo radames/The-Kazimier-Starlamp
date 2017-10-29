@@ -5,6 +5,9 @@
 
 #define MAX_EVENTS (5)
 
+
+enum TimeEvents {WAIT, START, EVENT_START, EVENT_END, WAIT_NEXT_PERIOD, END};
+
 class Scheduler;
 class SchedulerEvent
 {
@@ -12,11 +15,14 @@ class SchedulerEvent
   public:
     //SchedulerEvent();
     bool update(uint32_t now);
-
+  private:
+   TimeEvents _timeEvent;
   protected:
     int _id;
+    bool _eventState;
+    bool _newPeriod;
     uint32_t _lastEventTime;
-    uint32_t _lastEndEventTime;
+    uint32_t _lastPeriodTime;
     uint32_t _period;
     uint32_t _timeLength;
     uint32_t _startTime;
