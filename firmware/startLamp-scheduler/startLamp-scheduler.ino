@@ -70,7 +70,7 @@ void setup() {
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
   
-  mScheduler.setEvent(EVENT1, "03:58:00", "04:37:00", "00:00:10", "00:00:03", schedulerCallBack);
+  mScheduler.setEvent(EVENT1, "14:35:00", "14:40:00", "00:00:10", "00:00:03", schedulerCallBack);
   //mScheduler.setEvent(EVENT2, "03:00:20", "04:37:00", "00:00:20", schedulerCallBack);
 
 }
@@ -156,9 +156,9 @@ void loop () {
 
 void ambientIdle(void) {
   //play track 1 on loop
-  if (!tracks[0].isPlaying()) { 
+  if (!tracks[1].isPlaying()) { 
     resetTracksState();
-    tracks[0].loop();
+    tracks[1].loop();
   }
   ledOSC();
 }
@@ -188,9 +188,9 @@ void schedulerCallBack(int eventId, bool eventState) {
 void event1Func() {
   //1 min
   //play track 2 (Bell Sound 1)
-  if (!tracks[1].isPlaying()) {
+  if (!tracks[2].isPlaying()) {
     resetTracksState();
-    tracks[1].play();  
+    tracks[2].play();  
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -200,9 +200,9 @@ void event1Func() {
 void event2Func() {
   //2min
   //play track 3 track 2 (Bell Sound 2)
-  if (!tracks[2].isPlaying()) {
+  if (!tracks[3].isPlaying()) {
     resetTracksState();
-    tracks[2].play();  
+    tracks[3].play();  
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);

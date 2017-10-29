@@ -5,8 +5,8 @@
 #define GMT_TIME_ZONE -7
 
 //MP3 Volume 0-30
-#define MP3_VOLUME 15
-#define AUDIO_TRACKS 2
+#define MP3_VOLUME 28
+#define AUDIO_TRACKS 3
 
 
 //Audio analysis MIN-MAX 0-1024

@@ -2,7 +2,7 @@
 #include "DFRobotDFPlayerMini.h"
 #include "MP3Player.h"
 
-int MP3Player::_id = 1;
+int MP3Player::_id = 0;
 MP3Player::MP3Player()
 {
   _trackid = _id++;
