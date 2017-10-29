@@ -162,7 +162,7 @@ void ambientIdle(void) {
 void ledOSC() {
     //sine wave led pattern 
     float t = (float)millis()/LED_OSC_PERIOD;
-    int pValue = 0.5*OUT_MAX*(1 + sin(2.0*PI*t));
+    int pValue = 0.5*LED_OSC_MAX_AMP*(1 + sin(2.0*PI*t));
     analogWrite(LED_PIN, pValue);
 }
 
