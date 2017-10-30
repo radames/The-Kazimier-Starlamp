@@ -51,40 +51,72 @@ void Scheduler::setEvent(int id, const char* startTime, const char* endTime, con
   _events[id]._callback = callback;
   _events[id]._lastEventTime = 0;
   _events[id]._lastPeriodTime = 0;
-  _events[id]._eventState = false; //never started
-  _events[id]._newPeriod = false;
+  _events[id]._timeEvent = WAIT_NEXT_PERIOD;
 }
 
 bool SchedulerEvent::update(uint32_t now)
 {
   if (now >= _startTime && now <= _endTime) {
-    //only runs  in this interval
-
-    if (_newPeriod) {
-      //trigger start and end event
-      if (_eventState == false) {
-        _eventState = true; //event has started
-        (*_callback)(_id, _eventState);
+    //only runs in the starend window
+    switch (_timeEvent) {
+      case CHECK_PERIOD:
+        _lastPeriodTime = 2 * now - (_startTime + _period);
+        _timeEvent = EVENT_START;
+        break;
+      case EVENT_START:
+        (*_callback)(_id, true); //event start
+        _timeEvent = WAIT_LENGTH;
         _lastEventTime = now;
-      } else {
-        //check for timeLength
+        break;
+      case WAIT_LENGTH:
         if (now - _lastEventTime >= _timeLength) {
-          _eventState = false; //event has endeded
-          (*_callback)(_id, _eventState);
-          _newPeriod = true;
-        }
-      }
-    }
-    if (now - _lastPeriodTime > _period) {
-      //take care of period events
-      _lastPeriodTime = now;
-      _newPeriod = true;
+          _timeEvent = EVENT_END;
+        };
+        break;
+      case EVENT_END:
+        (*_callback)(_id, false); //event start
+        _timeEvent = WAIT_NEXT_PERIOD;
+        break;
+      case WAIT_NEXT_PERIOD:
+        if (now - _lastPeriodTime >= _period) {
+          _lastPeriodTime = now;
+          _timeEvent = EVENT_START;
+        };
+        break;
     }
 
+  } else {
+    return false;
   }
-
-
-  return true;
 }
+
+//  if (now >= _startTime && now <= _endTime) {
+//    //only runs  in this interval
+//
+//    if (_newPeriod) {
+//      //trigger start and end event
+//      if (_eventState == false) {
+//        _eventState = true; //event has started
+//        (*_callback)(_id, _eventState);
+//        _lastEventTime = now;
+//      } else {
+//        //check for timeLength
+//        if (now - _lastEventTime >= _timeLength) {
+//          _eventState = false; //event has endeded
+//          (*_callback)(_id, _eventState);
+//          _newPeriod = true;
+//        }
+//      }
+//    }
+//    if (now - _lastPeriodTime > _period) {
+//      //take care of period events
+//      _lastPeriodTime = now;
+//      _newPeriod = true;
+//    }
+//
+//  }
+
+
+
 
 
