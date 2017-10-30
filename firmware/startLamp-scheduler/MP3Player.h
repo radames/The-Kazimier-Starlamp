@@ -9,7 +9,7 @@ class MP3Player
   public:
     MP3Player();
     void update(int value);
-    void start(DFRobotDFPlayerMini &DFPlayer);
+    int start(DFRobotDFPlayerMini &DFPlayer);
     bool isPlaying();
     void loop();
     void play();

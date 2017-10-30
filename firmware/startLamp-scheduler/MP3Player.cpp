@@ -5,12 +5,13 @@
 int MP3Player::_id = 0;
 MP3Player::MP3Player()
 {
-  _trackid = _id++;
+  _trackid = ++_id;
   _value = 0;
   _isPlaying = false;
 }
-void MP3Player::start(DFRobotDFPlayerMini &DFPlayer) {
+int MP3Player::start(DFRobotDFPlayerMini &DFPlayer) {
   _DFPlayer = &DFPlayer;
+  return _trackid;
 }
 void MP3Player::play() {
   _DFPlayer->play(_trackid);

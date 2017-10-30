@@ -65,7 +65,8 @@ void setup() {
   mAudio.initAudioAnalisys();
   myDFPlayer.volume(MP3_VOLUME);  //Set volume value. From 0 to 30
   for (int i = 0; i < AUDIO_TRACKS; i++) {
-    tracks[i].start(myDFPlayer);
+    Serial.print("MP3-ID: "); 
+    Serial.println(tracks[i].start(myDFPlayer));
   }
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
@@ -156,9 +157,9 @@ void loop () {
 
 void ambientIdle(void) {
   //play track 1 on loop
-  if (!tracks[1].isPlaying()) { 
+  if (!tracks[0].isPlaying()) { 
     resetTracksState();
-    tracks[1].loop();
+    tracks[0].loop();
   }
   ledOSC();
 }
@@ -190,9 +191,9 @@ void schedulerCallBack(int eventId, bool eventState) {
 void event1Func() {
   //1 min
   //play track 2 (Bell Sound 1)
-  if (!tracks[2].isPlaying()) {
+  if (!tracks[1].isPlaying()) {
     resetTracksState();
-    tracks[2].play();  
+    tracks[1].play();  
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -202,9 +203,9 @@ void event1Func() {
 void event2Func() {
   //2min
   //play track 3 track 2 (Bell Sound 2)
-  if (!tracks[3].isPlaying()) {
+  if (!tracks[2].isPlaying()) {
     resetTracksState();
-    tracks[3].play();  
+    tracks[2].play();  
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
