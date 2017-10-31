@@ -30,13 +30,13 @@ NTPClient timeClient(ntpUDP, NTP_SERVER, GMT_TIME_ZONE * 3600 , 60000);
 int timeUpdated = 0;
 long lastPrintTime = 0;
 
-enum EventState {EVENT1, EVENT2, AMBIENT, WAITING};
+enum EventState {EVENT1, EVENT2, AMBIENT, RESET, WAITING};
 EventState nState = AMBIENT;
 
 void setup() {
   Serial.begin(9600);
   Serial.print("\n\n\n\n");
-  
+
   if (!rtc.begin()) {
     Serial.println("Couldn't find RTC");
     while (1);
@@ -76,7 +76,7 @@ void setup() {
   mScheduler.setStart(SCHEDULER_START_TIME);
   mScheduler.setEnd(SCHEDULER_END_TIME);
   mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
- // mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
+  // mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
 
 }
 
@@ -135,29 +135,34 @@ void syncTime(void) {
 
 void loop () {
   DateTime now = rtc.now();
-  if(!mScheduler.update(now.hour(), now.minute(), now.second())) nState = WAITING;
+  if (!mScheduler.update(now.hour(), now.minute(), now.second())) nState = RESET;
 
 
   if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
     logDateTime();
-    if (millis() > 40000) if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) resetRTC();
+    if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) resetRTC();
 
   }
 
   switch (nState) {
-    case WAITING:
-        Serial.println("Waiting for Scheduler Start");
-        delay(1000);
-      break;
-    case AMBIENT:
-      ambientIdle();
-      break;
     case EVENT1:
       event1Func();
       break;
     case EVENT2:
       event2Func();
+      break;
+    case AMBIENT:
+      ambientIdle();
+      break;
+    case RESET:
+      resetTracksState();
+      analogWrite(LED_PIN, 0);
+      nState = WAITING;
+      break;
+    case WAITING:
+      Serial.println("Waiting for Scheduler Start");
+      delay(1000);
       break;
   }
 
