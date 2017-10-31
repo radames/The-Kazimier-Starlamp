@@ -35,12 +35,16 @@ EventState nState = AMBIENT;
 
 void setup() {
   Serial.begin(9600);
+  Serial.print("\n\n\n\n");
 
   if (!rtc.begin()) {
     Serial.println("Couldn't find RTC");
     while (1);
   }
+  DateTime now = rtc.now();
+  Serial.println(now.unixtime());
 
+  logDateTime();
   //DFPlayer Startup
   mySoftwareSerial.begin(9600);
 
@@ -65,12 +69,12 @@ void setup() {
   mAudio.initAudioAnalisys();
   myDFPlayer.volume(MP3_VOLUME);  //Set volume value. From 0 to 30
   for (int i = 0; i < AUDIO_TRACKS; i++) {
-    Serial.print("MP3-ID: "); 
+    Serial.print("MP3-ID: ");
     Serial.println(tracks[i].start(myDFPlayer));
   }
   mScheduler.setStart("16:00:00");
   mScheduler.setEnd("22:00:00");
-  
+
   mScheduler.setEvent(EVENT1, "20:20:00", "20:50:00", "00:01:00", "00:00:10", schedulerCallBack);
   //mScheduler.setEvent(EVENT2, "03:00:20", "04:37:00", "00:00:20", schedulerCallBack);
 
@@ -137,6 +141,8 @@ void loop () {
   if (millis() - lastPrintTime > 100) { //po
     lastPrintTime = millis();
     logDateTime();
+    if (millis() > 40000) if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) resetRTC();
+
   }
 
   switch (nState) {
@@ -144,10 +150,10 @@ void loop () {
       ambientIdle();
       break;
     case EVENT1:
-        event1Func();
+      event1Func();
       break;
     case EVENT2:
-        event2Func();
+      event2Func();
       break;
   }
 
@@ -157,7 +163,7 @@ void loop () {
 
 void ambientIdle(void) {
   //play track 1 on loop
-  if (!tracks[0].isPlaying()) { 
+  if (!tracks[0].isPlaying()) {
     resetTracksState();
     tracks[0].loop();
   }
@@ -173,14 +179,13 @@ void ledOSC() {
 }
 
 void schedulerCallBack(int eventId, bool eventState) {
-  
   Serial.print("EVENT--->  ");
   Serial.print(eventId);
   Serial.print("  ");
-  if(eventState){
+  if (eventState) {
     Serial.print("STARTED");
     nState = (EventState)eventId;
-  }else{
+  } else {
     Serial.print("ENDED");
     nState = AMBIENT;
   }
@@ -193,7 +198,7 @@ void event1Func() {
   //play track 2 (Bell Sound 1)
   if (!tracks[1].isPlaying()) {
     resetTracksState();
-    tracks[1].play();  
+    tracks[1].play();
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -205,7 +210,7 @@ void event2Func() {
   //play track 3 track 2 (Bell Sound 2)
   if (!tracks[2].isPlaying()) {
     resetTracksState();
-    tracks[2].play();  
+    tracks[2].play();
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -220,11 +225,37 @@ void logDateTime(void) {
   Serial.print("  ");
   Serial.print(now.hour(), DEC); Serial.print(':');
   Serial.print(now.minute(), DEC); Serial.print(':');
-  Serial.print(now.second(), DEC); Serial.println();
+  Serial.print(now.second(), DEC);
+  Serial.print("  ");
+  Serial.println(now.unixtime());
 }
 
-void resetTracksState(){
+void resetTracksState() {
   for (int i = 0; i < AUDIO_TRACKS; i++) {
     tracks[i].stop();
   }
 }
+
+
+#define SDA_LOW()   (GPES = (1 << SDA))
+#define SDA_HIGH()  (GPEC = (1 << SDA))
+#define SCL_LOW()   (GPES = (1 << SCL))
+#define SCL_HIGH()  (GPEC = (1 << SCL))
+#define SDA_READ()  ((GPI & (1 << SDA)) != 0)
+
+void resetRTC() {
+
+  pinMode(SDA, INPUT_PULLUP);
+  pinMode(SCL, INPUT_PULLUP);
+  do {
+    SDA_HIGH();
+    SCL_HIGH();
+    if (SDA_READ()) {
+      SDA_LOW();
+      SDA_HIGH();
+    }
+    SCL_LOW();
+  } while (SDA_READ() == 0);
+
+}
+
