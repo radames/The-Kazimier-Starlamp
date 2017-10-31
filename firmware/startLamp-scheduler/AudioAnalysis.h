@@ -10,6 +10,7 @@ class AudioAnalysis
     AudioAnalysis();
     void initAudioAnalisys(void);
     unsigned int analysis(int input);
+    void resetParams(void);
   private:      
     byte
     _peak      = 0,      // Used for falling dot

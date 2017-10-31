@@ -8,7 +8,17 @@ AudioAnalysis::AudioAnalysis()
 void AudioAnalysis::initAudioAnalisys(void) {
   memset(_vol, 0, sizeof(_vol));
 }
-
+void AudioAnalysis::resetParams(void) {
+  _peak      = 0;
+  _dotCount  = 0;
+  _volCount  = 0;
+  _lvl       = 10;
+  _minLvlAvg = 0;
+  _maxLvlAvg = 512;
+  for (int i = 0; i < SAMPLES; i++) {
+    _vol[i] = 0;
+  }
+}
 unsigned int AudioAnalysis::analysis(int input)
 {
   uint8_t  i;

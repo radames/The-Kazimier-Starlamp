@@ -219,6 +219,7 @@ void event1Func() {
   if (!tracks[1].isPlaying()) {
     resetTracksState();
     tracks[1].play();
+    mAudio.resetParams();
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
@@ -231,6 +232,7 @@ void event2Func() {
   if (!tracks[2].isPlaying()) {
     resetTracksState();
     tracks[2].play();
+    mAudio.resetParams();
   }
   int input = analogRead(MIC_PIN);
   unsigned int out = mAudio.analysis(input);
