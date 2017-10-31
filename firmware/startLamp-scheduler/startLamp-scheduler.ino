@@ -76,7 +76,7 @@ void setup() {
   mScheduler.setStart(SCHEDULER_START_TIME);
   mScheduler.setEnd(SCHEDULER_END_TIME);
   mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
-  // mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
+  mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
 
 }
 
@@ -135,13 +135,13 @@ void syncTime(void) {
 
 void loop () {
   DateTime now = rtc.now();
-  if (!mScheduler.update(now.hour(), now.minute(), now.second())) nState = RESET;
+  if (!mScheduler.update(now.hour(), now.minute(), now.second())){ nState = RESET;};
 
 
   if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
     logDateTime();
-    if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) resetRTC();
+    if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31){ resetRTC();};
 
   }
 
