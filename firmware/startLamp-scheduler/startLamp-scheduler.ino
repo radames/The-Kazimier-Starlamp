@@ -73,11 +73,10 @@ void setup() {
     Serial.print("MP3-ID: ");
     Serial.println(tracks[i].start(myDFPlayer));
   }
-  mScheduler.setStart("16:00:00");
-  mScheduler.setEnd("22:00:00");
-
-  mScheduler.setEvent(EVENT1, "20:20:00", "20:50:00", "00:01:00", "00:00:10", schedulerCallBack);
-  //mScheduler.setEvent(EVENT2, "03:00:20", "04:37:00", "00:00:20", schedulerCallBack);
+  mScheduler.setStart(SCHEDULER_START_TIME);
+  mScheduler.setEnd(SCHEDULER_END_TIME);
+  mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
+  mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
 
 }
 
