@@ -31,7 +31,7 @@ int timeUpdated = 0;
 long lastPrintTime = 0;
 
 enum EventState {EVENT1, EVENT2, AMBIENT, RESET, WAITING};
-EventState nState = AMBIENT;
+EventState nState = RESET;
 
 void setup() {
   Serial.begin(9600);
@@ -136,7 +136,7 @@ void syncTime(void) {
 void loop () {
   DateTime now = rtc.now();
   if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31){ resetRTC();};
-  if (!mScheduler.update(now.hour(), now.minute(), now.second())){ nState = RESET;};
+  mScheduler.update(now.hour(), now.minute(), now.second());
 
 #ifdef DEBUG_MODE
   if (millis() - lastPrintTime > 1000) { //po
@@ -147,15 +147,27 @@ void loop () {
 
   switch (nState) {
     case EVENT1:
-      event1Func();
+#ifdef DEBUG_MODE_2
+     Serial.println("EVENT 1 STATE MACHINE ____>");
+#endif /* debug mode print actual time */
+     event1Func();
       break;
     case EVENT2:
-      event2Func();
+#ifdef DEBUG_MODE_2
+      Serial.println("EVENT 2 STATE MACHINE ____>");
+#endif /* debug mode print actual time */
+     event2Func();
       break;
     case AMBIENT:
-      ambientIdle();
+#ifdef DEBUG_MODE_2
+     Serial.println("AMBIENT STATE MACHINE ____>");
+#endif /* debug mode print actual time */
+     ambientIdle();
       break;
     case RESET:
+#ifdef DEBUG_MODE_2
+      Serial.println("RESET STATE MACHINE ____>");
+#endif /* debug mode print actual time */
       resetTracksState();
       analogWrite(LED_PIN, 0);
       nState = WAITING;
