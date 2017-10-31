@@ -135,15 +135,15 @@ void syncTime(void) {
 
 void loop () {
   DateTime now = rtc.now();
+  if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31){ resetRTC();};
   if (!mScheduler.update(now.hour(), now.minute(), now.second())){ nState = RESET;};
 
-
+#ifdef DEBUG_MODE
   if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
     logDateTime();
-    if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31){ resetRTC();};
-
   }
+#endif /* debug mode print actual time */
 
   switch (nState) {
     case EVENT1:
@@ -165,8 +165,7 @@ void loop () {
       delay(1000);
       break;
   }
-
-  //audio();
+  
 }
 
 
