@@ -23,15 +23,19 @@ Scheduler::Scheduler() {
   _trackeventid = _eventID++;
 }
 
-void Scheduler::update(uint8_t hour, uint8_t min, uint8_t sec) {
+bool Scheduler::update(uint8_t hour, uint8_t min, uint8_t sec) {
   //store actual time in seconds;
   _now_seconds = convertToSec(hour, min, sec) ;
 
-  for (uint8_t i = 0; i < arr_len(_events) - 1 ; ++i) {
-    _events[i].update(_now_seconds);
+  if (_now_seconds >= _n_startTime && _now_seconds <= _n_endTime) {
+    //only runs the Scheduler within the start end time
+    for (uint8_t i = 0; i < arr_len(_events) - 1 ; ++i) {
+      _events[i].update(_now_seconds);
+    }
+    return true; //scheduler running
+  } else {
+    return false; //scheduler not running
   }
-
-
 }
 
 void Scheduler::setStart(const char* time) {

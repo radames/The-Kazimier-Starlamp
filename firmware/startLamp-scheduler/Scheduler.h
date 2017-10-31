@@ -39,7 +39,7 @@ class Scheduler
 
     void setEvent(int id, const char* startTime, const char* endTime, const char* period, const char* timeLength, void (*callback)(int eventId, bool eventState));
 
-    void update(uint8_t hour, uint8_t min, uint8_t sec);
+    bool update(uint8_t hour, uint8_t min, uint8_t sec);
     void setStart(const char* time);
     void setEnd(const char* time);
 
