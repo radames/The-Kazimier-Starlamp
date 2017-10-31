@@ -36,11 +36,12 @@ EventState nState = AMBIENT;
 void setup() {
   Serial.begin(9600);
   Serial.print("\n\n\n\n");
-
+  
   if (!rtc.begin()) {
     Serial.println("Couldn't find RTC");
     while (1);
   }
+  resetRTC();
   DateTime now = rtc.now();
   Serial.println(now.unixtime());
 
