@@ -30,7 +30,7 @@ NTPClient timeClient(ntpUDP, NTP_SERVER, GMT_TIME_ZONE * 3600 , 60000);
 int timeUpdated = 0;
 long lastPrintTime = 0;
 
-enum EventState {EVENT1, EVENT2, AMBIENT};
+enum EventState {EVENT1, EVENT2, AMBIENT, WAITING};
 EventState nState = AMBIENT;
 
 void setup() {
@@ -76,7 +76,7 @@ void setup() {
   mScheduler.setStart(SCHEDULER_START_TIME);
   mScheduler.setEnd(SCHEDULER_END_TIME);
   mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
-  mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
+ // mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
 
 }
 
@@ -135,10 +135,10 @@ void syncTime(void) {
 
 void loop () {
   DateTime now = rtc.now();
-  mScheduler.update(now.hour(), now.minute(), now.second());
+  if(!mScheduler.update(now.hour(), now.minute(), now.second())) nState = WAITING;
 
 
-  if (millis() - lastPrintTime > 100) { //po
+  if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
     logDateTime();
     if (millis() > 40000) if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) resetRTC();
@@ -146,6 +146,10 @@ void loop () {
   }
 
   switch (nState) {
+    case WAITING:
+        Serial.println("Waiting for Scheduler Start");
+        delay(1000);
+      break;
     case AMBIENT:
       ambientIdle();
       break;

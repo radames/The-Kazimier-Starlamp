@@ -55,7 +55,7 @@ void Scheduler::setEvent(int id, const char* startTime, const char* endTime, con
   _events[id]._callback = callback;
   _events[id]._lastEventTime = 0;
   _events[id]._lastPeriodTime = 0;
-  _events[id]._timeEvent = WAIT_NEXT_PERIOD;
+  _events[id]._timeEvent = CHECK_PERIOD;
 }
 
 bool SchedulerEvent::update(uint32_t now)
@@ -64,8 +64,8 @@ bool SchedulerEvent::update(uint32_t now)
     //only runs in the starend window
     switch (_timeEvent) {
       case CHECK_PERIOD:
-        _lastPeriodTime = 2 * now - (_startTime + _period);
-        _timeEvent = EVENT_START;
+        _lastPeriodTime = (int)((now - _startTime) / _period) * _period + _startTime;
+        _timeEvent = WAIT_NEXT_PERIOD;
         break;
       case EVENT_START:
         (*_callback)(_id, true); //event start
@@ -88,39 +88,8 @@ bool SchedulerEvent::update(uint32_t now)
         };
         break;
     }
-
+    return true; //event running
   } else {
-    return false;
+    return false; //event not running
   }
 }
-
-//  if (now >= _startTime && now <= _endTime) {
-//    //only runs  in this interval
-//
-//    if (_newPeriod) {
-//      //trigger start and end event
-//      if (_eventState == false) {
-//        _eventState = true; //event has started
-//        (*_callback)(_id, _eventState);
-//        _lastEventTime = now;
-//      } else {
-//        //check for timeLength
-//        if (now - _lastEventTime >= _timeLength) {
-//          _eventState = false; //event has endeded
-//          (*_callback)(_id, _eventState);
-//          _newPeriod = true;
-//        }
-//      }
-//    }
-//    if (now - _lastPeriodTime > _period) {
-//      //take care of period events
-//      _lastPeriodTime = now;
-//      _newPeriod = true;
-//    }
-//
-//  }
-
-
-
-
-
