@@ -72,21 +72,16 @@ void setup() {
   for (int i = 0; i < AUDIO_TRACKS; i++) {
     Serial.print("MP3-ID: ");
     Serial.println(tracks[i].start(myDFPlayer));
+#ifdef DEBUG_MODE
+    tracks[i].play();
+    delay(5000);
+#endif
   }
+  resetTracksState();
   mScheduler.setStart(SCHEDULER_START_TIME);
   mScheduler.setEnd(SCHEDULER_END_TIME);
   mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
   mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
-
-#ifdef DEBUG_MODE
-  tracks[0].play();
-  delay(5000);
-  tracks[1].play();
-  delay(3000);
-  tracks[2].play();
-  delay(3000);
-#endif /* debug mode print actual time */
-
 }
 
 
