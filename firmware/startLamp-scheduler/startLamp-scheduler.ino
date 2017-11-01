@@ -78,6 +78,15 @@ void setup() {
   mScheduler.setEvent(EVENT1, E1_START_TIME, E1_END_TIME, E1_PERIOD, E1_LENGTH, schedulerCallBack);
   mScheduler.setEvent(EVENT2, E2_START_TIME, E2_END_TIME, E2_PERIOD, E2_LENGTH, schedulerCallBack);
 
+#ifdef DEBUG_MODE
+  tracks[0].play();
+  delay(5000);
+  tracks[1].play();
+  delay(3000);
+  tracks[2].play();
+  delay(3000);
+#endif /* debug mode print actual time */
+
 }
 
 
@@ -135,9 +144,10 @@ void syncTime(void) {
 
 void loop () {
   DateTime now = rtc.now();
-  if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31){ resetRTC();};
-  mScheduler.update(now.hour(), now.minute(), now.second());
-
+  if (now.hour() > 24 || now.minute() > 60 || now.second() > 60 || now.month() > 12 || now.day() > 31) {
+    resetRTC();
+  };
+  bool isRunning = mScheduler.update(now.hour(), now.minute(), now.second());
 #ifdef DEBUG_MODE
   if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
@@ -148,21 +158,30 @@ void loop () {
   switch (nState) {
     case EVENT1:
 #ifdef DEBUG_MODE_2
-     Serial.println("EVENT 1 STATE MACHINE ____>");
+      Serial.println("EVENT 1 STATE MACHINE ____>");
 #endif /* debug mode print actual time */
-     event1Func();
+      event1Func();
+      if (!isRunning) {
+        nState = RESET;
+      }
       break;
     case EVENT2:
 #ifdef DEBUG_MODE_2
       Serial.println("EVENT 2 STATE MACHINE ____>");
 #endif /* debug mode print actual time */
-     event2Func();
+      event2Func();
+      if (!isRunning) {
+        nState = RESET;
+      }
       break;
     case AMBIENT:
 #ifdef DEBUG_MODE_2
-     Serial.println("AMBIENT STATE MACHINE ____>");
+      Serial.println("AMBIENT STATE MACHINE ____>");
 #endif /* debug mode print actual time */
-     ambientIdle();
+      ambientIdle();
+      if (!isRunning) {
+        nState = RESET;
+      }
       break;
     case RESET:
 #ifdef DEBUG_MODE_2
@@ -175,9 +194,12 @@ void loop () {
     case WAITING:
       Serial.println("Waiting for Scheduler Start");
       delay(1000);
+      if (isRunning) {
+        nState = AMBIENT;
+      }
       break;
   }
-  
+
 }
 
 
