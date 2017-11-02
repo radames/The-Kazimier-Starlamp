@@ -33,11 +33,39 @@ void MP3Player::play() {
 }
 void MP3Player::loop() {
   _DFPlayer->loop(_trackid);
-  _isPlaying = true;
+  if (checkError()) {
+    //check for error
+#ifdef DEBUG_MODE
+    Serial.print("ERROR DFPLAYER --------> LOOPING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    //keep _isPlaying false until next interaction
+    _isPlaying = false;
+  } else {
+#ifdef DEBUG_MODE
+    Serial.print("SUCCESS ---------------------> LOOPING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    _isPlaying = true;
+  }
 }
 void MP3Player::stop() {
   _DFPlayer->stop();
-  _isPlaying = false;
+  if (checkError()) {
+    //check for error
+#ifdef DEBUG_MODE
+    Serial.print("ERROR DFPLAYER --------> STOPING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    //keep _isPlaying false until next interaction
+    _isPlaying = true;
+  } else {
+#ifdef DEBUG_MODE
+    Serial.print("SUCCESS ---------------------> STOPING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    _isPlaying = false;
+  }
 }
 bool MP3Player::isPlaying(){
   return _isPlaying;
