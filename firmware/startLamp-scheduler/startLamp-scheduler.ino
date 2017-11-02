@@ -203,9 +203,6 @@ void ambientIdle(void) {
   if (!tracks[0].isPlaying()) {
     resetTracksState();
     tracks[0].loop();
-#ifdef DEBUG_MODE
-    Serial.println("--------> PLAY TRACK 0");
-#endif
   }
   ledOSC();
 }
@@ -239,9 +236,6 @@ void event1Func() {
   if (!tracks[1].isPlaying()) {
     resetTracksState();
     tracks[1].play();
-#ifdef DEBUG_MODE
-    Serial.println("--------> PLAY TRACK 1");
-#endif
     mAudio.resetParams();
   }
   int input = analogRead(MIC_PIN);
@@ -255,9 +249,6 @@ void event2Func() {
   if (!tracks[2].isPlaying()) {
     resetTracksState();
     tracks[2].play();
-#ifdef DEBUG_MODE
-    Serial.println("--------> PLAY TRACK 2");
-#endif
     mAudio.resetParams();
   }
   int input = analogRead(MIC_PIN);

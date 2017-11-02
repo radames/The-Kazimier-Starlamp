@@ -19,6 +19,7 @@ class MP3Player
     static int _id;
     int _trackid;
     DFRobotDFPlayerMini* _DFPlayer;
+    bool checkError();
     int _value;
     bool _isPlaying;
 };

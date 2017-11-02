@@ -15,7 +15,21 @@ int MP3Player::start(DFRobotDFPlayerMini &DFPlayer) {
 }
 void MP3Player::play() {
   _DFPlayer->play(_trackid);
-   _isPlaying = true;
+  if (checkError()) {
+    //check for error
+#ifdef DEBUG_MODE
+    Serial.print("ERROR DFPLAYER --------> PLAYING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    //keep _isPlaying false until next interaction
+    _isPlaying = false;
+  } else {
+#ifdef DEBUG_MODE
+    Serial.print("SUCCESS ---------------------> PLAYING TRACK -----> ");
+    Serial.println(_trackid);
+#endif
+    _isPlaying = true;
+  }
 }
 void MP3Player::loop() {
   _DFPlayer->loop(_trackid);
@@ -39,4 +53,13 @@ void MP3Player::update(int value)
     _DFPlayer->stop();
 
   }
+}
+bool MP3Player::checkError() {
+  delay(100);
+  if (_DFPlayer->available()) {
+    if (_DFPlayer->readType() == DFPlayerError) {
+      return true;
+    }
+  }
+  return false; //return false if there is no data from the mp3 module
 }
