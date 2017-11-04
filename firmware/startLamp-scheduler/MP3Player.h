@@ -14,6 +14,7 @@ class MP3Player
     void loop();
     void play();
     void stop();
+    void resetState();
    
   private:
     static int _id;

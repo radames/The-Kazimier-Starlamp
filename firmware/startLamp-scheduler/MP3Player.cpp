@@ -71,6 +71,10 @@ bool MP3Player::isPlaying(){
   return _isPlaying;
 }
 
+void MP3Player::resetState(){
+  _isPlaying = false;
+}
+
 void MP3Player::update(int value)
 {
   _value = value;
