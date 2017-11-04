@@ -58,13 +58,13 @@ void Scheduler::setEvent(int id, const char* startTime, const char* endTime, con
   _events[id]._timeEvent = CHECK_PERIOD;
 }
 
-bool SchedulerEvent::update(uint32_t now)
-{
+bool SchedulerEvent::update(uint32_t now) {
   if (now >= _startTime && now <= _endTime) {
     //only runs in the starend window
     switch (_timeEvent) {
       case CHECK_PERIOD:
-        _lastPeriodTime = (int)((now - _startTime) / _period) * _period + _startTime;
+        if (now <= _startTime) _lastPeriodTime = _startTime;
+        else _lastPeriodTime = now - (now - _startTime) % _period;
         _timeEvent = WAIT_NEXT_PERIOD;
         break;
       case EVENT_START:

@@ -271,7 +271,7 @@ void logDateTime(void) {
 
 void resetTracksState() {
   for (int i = 0; i < AUDIO_TRACKS; i++) {
-    tracks[i].stop();
+    tracks[i].resetState();
   }
 }
 
