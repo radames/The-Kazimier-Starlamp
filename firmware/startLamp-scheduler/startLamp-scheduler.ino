@@ -174,9 +174,9 @@ void loop () {
       Serial.println("AMBIENT STATE MACHINE ____>");
 #endif /* debug mode print actual time */
       ambientIdle(false);
-      if (!isRunning) {
-        nState = RESET;
-      }
+//      if (!isRunning) {
+//        nState = RESET;
+//      }
       break;
     case RESET:
 #ifdef DEBUG_MODE_2
