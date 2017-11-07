@@ -173,10 +173,15 @@ void loop () {
 #ifdef DEBUG_MODE_2
       Serial.println("AMBIENT STATE MACHINE ____>");
 #endif /* debug mode print actual time */
+
+#ifdef AMBIENT_MODE
+      ambientIdle(true);
+      if (!isRunning) {
+        nState = RESET;
+      }
+#else
       ambientIdle(false);
-//      if (!isRunning) {
-//        nState = RESET;
-//      }
+#endif
       break;
     case RESET:
 #ifdef DEBUG_MODE_2
@@ -187,7 +192,12 @@ void loop () {
         tracks[i].stop();
       }
       analogWrite(LED_PIN, 0);
+
+#ifdef AMBIENT_MODE
+      nState = WAITING;
+#else
       nState = AMBIENT;
+#endif
       break;
     case WAITING:
       Serial.println("Waiting for Scheduler Start");
