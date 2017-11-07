@@ -146,6 +146,8 @@ void loop () {
 #ifdef DEBUG_MODE
   if (millis() - lastPrintTime > 1000) { //po
     lastPrintTime = millis();
+    if(isRunning) Serial.print("Scheduler ON ");
+    else Serial.print("Scheduler OFF ");
     logDateTime();
   }
 #endif /* debug mode print actual time */
@@ -281,7 +283,7 @@ void logDateTime(void) {
   Serial.print(now.minute(), DEC); Serial.print(':');
   Serial.print(now.second(), DEC);
   Serial.print("  ");
-  Serial.println(now.unixtime());
+  Serial.println(now.hour() * 60 * 60 + now.minute() * 60 + now.second());
 }
 
 void resetTracksState() {

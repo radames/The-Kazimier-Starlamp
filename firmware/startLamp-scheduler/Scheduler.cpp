@@ -59,37 +59,44 @@ void Scheduler::setEvent(int id, const char* startTime, const char* endTime, con
 }
 
 bool SchedulerEvent::update(uint32_t now) {
-  if (now >= _startTime && now <= _endTime) {
-    //only runs in the starend window
-    switch (_timeEvent) {
-      case CHECK_PERIOD:
-        if (now <= _startTime) _lastPeriodTime = _startTime;
-        else _lastPeriodTime = now - (now - _startTime) % _period;
-        _timeEvent = WAIT_NEXT_PERIOD;
-        break;
-      case EVENT_START:
-        (*_callback)(_id, true); //event start
-        _timeEvent = WAIT_LENGTH;
-        _lastEventTime = now;
-        break;
-      case WAIT_LENGTH:
-        if (now - _lastEventTime >= _timeLength) {
-          _timeEvent = EVENT_END;
-        };
-        break;
-      case EVENT_END:
-        (*_callback)(_id, false); //event start
-        _timeEvent = WAIT_NEXT_PERIOD;
-        break;
-      case WAIT_NEXT_PERIOD:
-        if (now - _lastPeriodTime >= _period) {
-          _lastPeriodTime = now;
-          _timeEvent = EVENT_START;
-        };
-        break;
-    }
-    return true; //event running
-  } else {
-    return false; //event not running
+  switch (_timeEvent) {
+    case CHECK_PERIOD:
+      if (now <= _startTime) _lastPeriodTime = _startTime - _period;
+      else _lastPeriodTime = now - (now - _startTime) % _period;
+      _timeEvent = WAIT_NEXT_PERIOD;
+      break;
+    case EVENT_START:
+      (*_callback)(_id, true); //event start
+      _timeEvent = WAIT_LENGTH;
+      _lastEventTime = now;
+      break;
+    case WAIT_LENGTH:
+      if ((int32_t)(now - (_lastEventTime + _timeLength)) >= 0) {
+        _timeEvent = EVENT_END;
+      };
+      break;
+    case EVENT_END:
+      (*_callback)(_id, false); //event start
+      _timeEvent = WAIT_NEXT_PERIOD;
+      break;
+    case WAIT_NEXT_PERIOD:
+      if ((int32_t)(now - (_lastPeriodTime + _period)) >= 0) {
+        _lastPeriodTime = now;
+        _timeEvent = EVENT_START;
+      };
+      if (now >= _endTime) {
+        _timeEvent = PERIOD_END;
+#ifdef DEBUG_MODE
+        Serial.print("EVENT ID");
+        Serial.print(_id);
+        Serial.println(" -- > EVENT ENDED");
+#endif
+      }
+      break;
+    case PERIOD_END:
+      return false; //event not running
+      break;
   }
+  return true; //event running
+
 }
