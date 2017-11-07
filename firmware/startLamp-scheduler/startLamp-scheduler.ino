@@ -173,7 +173,7 @@ void loop () {
 #ifdef DEBUG_MODE_2
       Serial.println("AMBIENT STATE MACHINE ____>");
 #endif /* debug mode print actual time */
-      ambientIdle();
+      ambientIdle(false);
       if (!isRunning) {
         nState = RESET;
       }
@@ -182,9 +182,12 @@ void loop () {
 #ifdef DEBUG_MODE_2
       Serial.println("RESET STATE MACHINE ____>");
 #endif /* debug mode print actual time */
-      resetTracksState();
+      for (int i = 0; i < AUDIO_TRACKS; i++) {
+        tracks[i].resetState();
+        tracks[i].stop();
+      }
       analogWrite(LED_PIN, 0);
-      nState = WAITING;
+      nState = AMBIENT;
       break;
     case WAITING:
       Serial.println("Waiting for Scheduler Start");
@@ -198,11 +201,13 @@ void loop () {
 }
 
 
-void ambientIdle(void) {
+void ambientIdle(bool wSound) {
   //play track 1 on loop
-  if (!tracks[0].isPlaying()) {
-    resetTracksState();
-    tracks[0].loop();
+  if (wSound) {
+    if (!tracks[0].isPlaying()) {
+      resetTracksState();
+      tracks[0].loop();
+    }
   }
   ledOSC();
 }
